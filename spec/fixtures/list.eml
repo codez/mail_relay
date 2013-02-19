@@ -1,0 +1,35 @@
+Return-Path: <example.com_members-bounces=example@list.example.com>
+Received: from example.net (localhost.localdomain [127.0.0.1])
+	by example.com (8.13.8/8.13.8) with ESMTP id qBAFXEhv032264
+	for <receiver@example.com>; Mon, 10 Dec 2012 16:33:16 +0100
+Received: from example.com (localhost.localdomain [127.0.0.1])
+	(authenticated bits=0)
+	by example.net (8.13.8/8.13.8) with ESMTP id qBAFX54N032230
+	for <list@example.com>; Mon, 10 Dec 2012 16:33:05 +0100
+Message-ID: <54254.77.56.73.44.1355153585@example.com>
+Date: Mon, 10 Dec 2012 16:33:05 +0100 (CET)
+From: "Sender" <sender@example.com>
+To: list@example.com
+User-Agent: SquirrelMail/1.4.8-5.el5.centos.13
+MIME-Version: 1.0
+X-Priority: 3 (Normal)
+Importance: Normal
+Subject: Test List
+X-BeenThere: list@example.com
+X-Mailman-Version: 2.1.9
+Precedence: list
+List-Id: Example List <list_list.example.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: members-bounces=list@example.com
+Errors-To: members-bounces+=list@example.com
+X-Envelope-To: receiver
+Content-Transfer-Encoding: 8bit
+
+
+Hallo Members
+
+Es herrscht Eiszeit
+
+Gruss
+Sender
+

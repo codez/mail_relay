@@ -1,0 +1,73 @@
+= Mail Relay
+
+Retrieves messages from a mail server and resends them to a list of receivers.
+
+First of all, you need a mail domain with a catch-all account. Configure the access to this account for {Mail}[https://github.com/mikel/mail]:
+
+  Mail.defaults do
+    retriever_method(:pop3, address:    'localhost',
+                            port:       995,
+                            user_name:  'catchall',
+                            password:   'secret',
+                            enable_ssl: true)
+  end
+
+The sending configuration is also done over Mail. See their documentation how to change the defaults.
+
+
+Then create your own subclass of <tt>MailRelay::Base</tt> and overwrite the following methods:
+
+  class RootRelay < MailRelay::Base
+    # Is the mail sent to a valid relay address?
+    def relay_address?
+       true
+    end
+    
+    # Is the mail sender allowed to post to this address
+    def sender_allowed?
+       true
+    end
+    
+    # List of receiver email addresses for the resent email.
+    def receivers
+       ['root@example.com']
+    end
+  end
+
+
+Every email from the server is processed in an own RootRelay instance and available there as +message+. 
+Several methods like +envelope_receiver_name+ or +sender_email+ are available to help you implement above methods.
+Two callback methods, +reject_not_existing+ and +reject_not_allowed+, are called if the email is not sent to a 
+valid relay address or if the sender is not allowed to post. So the main method boils down to the following:
+
+  def relay
+    if relay_address?
+      if sender_allowed?
+        resend_to(receivers)
+      else
+        reject_not_allowed
+      end
+    else
+      reject_not_existing
+    end
+  end
+    
+After processing, the email is deleted from the server.
+
+Now you only need to run your relay regularly, for example with 
+{Delayed::Job}[https://github.com/collectiveidea/delayed_job] or some other queue system:
+
+  RootRelay.relay_current
+  
+
+The following values may be configured for your relay:
+
+retrieve_count (5):: Maximum number of emails to retrieve in one batch. +relay_current+ will run as many batches until all currently available emails are processed.
+
+receiver_header (X-Envelope-To):: The name of an X Header that contains the envelope receiver of the email. This header may be set by your mail server.
+
+
+
+(c) 2013 Pascal Zumkehr MIT
+
+{<img src="https://secure.travis-ci.org/codez/mail_relay.png" />}[http://travis-ci.org/codez/mail_relay]

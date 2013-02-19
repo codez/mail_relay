@@ -1,0 +1,35 @@
+Return-Path: <sender@example.com>
+Received: from example.net (example.net [10.0.0.1])
+	by example.ch (8.13.8/8.13.8) with ESMTP id qBACV6sD020511
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO)
+	for receiver@example.com; Mon, 10 Dec 2012 13:31:06 +0100
+Received: from [10.0.0.2] ([10.0.0.2])
+	(authenticated bits=0)
+	by example.net (8.13.8/8.13.8) with ESMTP id qBACUedM027275
+	(version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO)
+	for <receiver@example.com>; Mon, 10 Dec 2012 13:31:01 +0100
+Subject: Re: Test Relay
+References: <50C5A426.9010703@example.com>
+From: Sender <sender@example.com>
+Content-Type: text/plain;
+	charset=utf-8
+X-Mailer: iPad Mail (10A523)
+In-Reply-To: <50C5A426.9010703@example.com>
+Message-Id: <743651E5-6CFF-41D5-8D01-3A3E57CC9B1C@example.com>
+Date: Mon, 10 Dec 2012 13:30:38 +0100
+To: Receiver <receiver@example.com>
+Mime-Version: 1.0 (1.0)
+X-Envelope-To: receiver
+Content-Transfer-Encoding: 8bit
+X-DSPAM-Result: Innocent
+X-DSPAM-Processed: Mon Dec 10 13:31:14 2012
+X-DSPAM-Confidence: 0.9914
+
+
+Hallo Pascal
+
+Whatup?
+
+
+Liebe Grüsse Tinu
+
