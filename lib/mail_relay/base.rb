@@ -12,6 +12,9 @@ module MailRelay
       # Number of emails to retrieve in one batch.
       attr_accessor :retrieve_count
 
+      # The local domain where mails are received and sent from.
+      attr_accessor :mail_domain
+
       # Retrieve, process and delete all mails from the mail server.
       def relay_current
         begin
@@ -21,6 +24,7 @@ module MailRelay
             begin
               new(message).relay
             rescue Exception => e
+              message.mark_for_delete = false
               last_exception = MailRelay::Error.new(message, e)
             end
           end
@@ -34,6 +38,7 @@ module MailRelay
 
     self.retrieve_count = 5
     self.receiver_header = 'X-Envelope-To'
+    self.mail_domain = 'localhost'
 
 
     attr_reader :message
@@ -58,9 +63,17 @@ module MailRelay
     # Send the same mail as is to all receivers, if any.
     def resend_to(destinations)
       if destinations.size > 0
-        add_custom_message_destinations
-        message.destinations = destinations
+        message.smtp_envelope_to = destinations
+
+        # Set envelope from and sender to local server to satisfy SPF:
+        # http://www.openspf.org/Best_Practices/Webgenerated
+        message.sender = envelope_sender
+        message.smtp_envelope_from = envelope_sender
+
+        # set list headers
         message.header['Precedence'] = 'list'
+        message.header['List-Id'] = list_id
+
         deliver(message)
       end
     end
@@ -123,6 +136,17 @@ module MailRelay
       []
     end
 
+    def envelope_sender
+      "#{envelope_receiver_name}@#{mail_domain}"
+    end
+
+    def list_id
+      "#{envelope_receiver_name}.#{mail_domain}"
+    end
+
+    def mail_domain
+      self.class.mail_domain
+    end
 
     private
 
@@ -131,18 +155,6 @@ module MailRelay
         ActionMailer::Base.wrap_delivery_behavior(message)
       end
       message.deliver
-    end
-
-    def add_custom_message_destinations
-      class << message
-        def destinations
-          @destinations || []
-        end
-
-        def destinations=(destinations)
-          @destinations = destinations
-        end
-      end
     end
 
   end

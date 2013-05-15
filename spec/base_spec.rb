@@ -64,7 +64,8 @@ describe MailRelay::Base do
       end
 
       it { should_not be_nil }
-      its(:destinations) { should == receivers }
+      its(:smtp_envelope_to) { should == receivers }
+      its(:smtp_envelope_from) { should == 'receiver@localhost' }
       its(:to) { should == ['receiver@example.com'] }
       its(:from) { should == ['sender@example.com'] }
     end
@@ -93,21 +94,33 @@ describe MailRelay::Base do
     it "fails after one batch" do
       MailRelay::Base.retrieve_count = 5
 
+      msg = Struct.new(:id, :mark_for_delete)
+      msgs1 = (1..5).collect {|i| msg.new(i, true) }
+      msgs2 = (6..8).collect {|i| msg.new(i, true) }
+
       first = true
       Mail.should_receive(:find_and_delete) do |options, &block|
-        msgs = first ? [1,2,3,4,5] : [6,7,8]
+        msgs = first ? msgs1 : msgs2
         msgs.each {|m| block.call(m) }
         first = false
         msgs
       end
 
-      m = mock
-      mock.stub(:relay)
-      MailRelay::Base.stub(:new).with(anything).and_return(m)
-      MailRelay::Base.stub(:new).with(3).and_raise("failure!")
-      MailRelay::Base.should_receive(:new).exactly(5).times
+
+      mail = double(:mail)
+      mail.should_receive(:relay).exactly(4).times
+      MailRelay::Base.stub(:new).and_return(mail)
+      mail = double(:mail)
+      mail.should_receive(:relay).and_raise('failure!')
+      MailRelay::Base.should_receive(:new).with(msgs1[2]).and_return(mail)
 
       expect { MailRelay::Base.relay_current }.to raise_error(MailRelay::Error)
+
+      msgs1[0].mark_for_delete.should == true
+      msgs1[1].mark_for_delete.should == true
+      msgs1[2].mark_for_delete.should == false
+      msgs1[3].mark_for_delete.should == true
+      msgs1[4].mark_for_delete.should == true
     end
   end
 end

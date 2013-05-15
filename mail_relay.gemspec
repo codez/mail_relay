@@ -19,11 +19,11 @@ Gem::Specification.new do |s|
 
   s.add_dependency "bundler", ">= 1.1"
 
-  s.add_dependency "mail"
-  
+  s.add_dependency "mail", ">= 2.5.4"
+
   s.add_development_dependency "rake"
   s.add_development_dependency "rdoc"
   s.add_development_dependency "simplecov"
   s.add_development_dependency "rspec"
-  
+
 end
